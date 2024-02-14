@@ -1,0 +1,109 @@
+<div class="container-fluid bg-black" style="height: 80px;">
+    <p class="h2 text-white text-center pt-4 text-uppercase">Product Management</p>
+</div>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-4">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">New
+                Product &nbsp; <i class="fa fa-save" style="font-size: 15px;"></i></button>
+        </div>
+        <div class="col-8">
+            <div class="d-flex">
+                <input class="form-control" type="text" placeholder="Search by name ..." id="search" (change)="listForName()">
+                <button class="btn btn-info" type="button" (click)="listForName()">Search</button>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Brand</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of listProducts | paginate: { itemsPerPage: 3, currentPage: page }">
+                        <td>{{item.product_name}}</td>
+                        <td>{{item.product_desc}}</td>
+                        <td>{{item.price}}</td>
+                        <td>{{item.brand}}</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-warning" style="padding: 10px 15px"
+                                data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="selectItem(item)">
+                                <i class="fa fa-pencil" style="font-size: 15px;"></i>
+                            </button>
+                            &nbsp;
+                            <button type="button" class="btn btn-danger" style="padding: 10px 15px"
+                                (click)="delete(item.product_id)">
+                                <i class="fa fa-trash" style="font-size: 15px;"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div style="display: flex; justify-content: center;">
+    <pagination-controls (pageChange)="page = $event" previousLabel="Anterior"
+        nextLabel="Siguiente"></pagination-controls>
+</div>
+
+<div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 *ngIf="!isUpdate" class="modal-title fs-5" id="exampleModalLabel">New Product</h1>
+                <h1 *ngIf="isUpdate" class="modal-title fs-5" id="exampleModalLabel">Update Product</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="newProduct()"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formProduct">
+                    <div class="row mb-3">
+                        <label for="" class="col-sm-3 col-form-label">Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" formControlName="product_name" (blur)="validateName()">
+                            <div *ngIf="isRequiredName" style="color: red;">Please, enter the product name</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="" class="col-sm-3 col-form-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea name="" id="" rows="2" class="form-control"
+                                formControlName="product_desc" (blur)="validateDesc()"></textarea>
+                            <div *ngIf="isRequiredDesc" style="color: red;">Please, enter the product description</div>
+                            <div *ngIf="isDescInvalid" style="color: red;">The description must be at least 10 characters</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="" class="col-sm-3 col-form-label">Price</label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" formControlName="price" min="0" step="0.05" (blur)="validatePrice()">
+                            <div *ngIf="isRequiredPrice" style="color: red;">Please, enter the product price</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="" class="col-sm-3 col-form-label">Brand</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" formControlName="brand" (blur)="validateBrand()">
+                            <div *ngIf="isRequiredBrand" style="color: red;">Please, enter the product brand</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button *ngIf="!isUpdate" type="button" class="btn btn-success" (click)="save()">Save changes</button>
+                <button *ngIf="isUpdate" id="update" type="button" class="btn btn-warning" (click)="update()">Update
+                    changes</button>
+            </div>
+        </div>
+    </div>
+</div>
